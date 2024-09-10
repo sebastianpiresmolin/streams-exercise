@@ -6,12 +6,9 @@ import org.exceptions.ProductNotFoundException;
 
 
 import java.time.format.DateTimeParseException;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
-import java.util.Scanner;
 
 public class Warehouse {
 
@@ -92,8 +89,6 @@ public class Warehouse {
 
         } catch (InputMismatchException e) {
             System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
-        } catch (DateTimeParseException e) {
-            System.out.println("Felaktigt datumformat, använd ÅÅÅÅ-MM-DD.");
         } catch (IllegalArgumentException e) {
             System.out.println("Fel: " + e.getMessage());
         }
@@ -111,9 +106,56 @@ public class Warehouse {
     }
 
 
+
+    public List<Product> filterProductsByCategoryFromUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
+            int categoryChoice = scanner.nextInt();
+            Category category = null;
+
+            switch (categoryChoice) {
+                case 1:
+                    category = Category.FRUIT;
+                    break;
+                case 2:
+                    category = Category.VEGETABLE;
+                    break;
+                case 3:
+                    category = Category.MEAT;
+                    break;
+                case 4:
+                    category = Category.FISH;
+                    break;
+                case 5:
+                    category = Category.DAIRY;
+                    break;
+                default:
+                    System.out.println("Ogiltigt val, försök igen.");
+                    return null;  // Returnerar null om valet är ogiltigt
+            }
+
+            // Anropa metoden som filtrerar och sorterar produkter efter kategori och namn
+            List<Product> filteredProducts = filterProductsByCategory(category);
+
+            if (filteredProducts.isEmpty()) {
+                System.out.println("Inga produkter hittades i den valda kategorin.");
+            } else {
+                System.out.println("Produkter i kategorin " + category + ":");
+                filteredProducts.forEach(System.out::println);
+            }
+
+            return filteredProducts;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Fel vid inmatning: " + e.getMessage());
+        }
+    }
+
     public List<Product> filterProductsByCategory(Category category) {
         return products.stream()
                 .filter(product -> product.category() == category)
+                .sorted(Comparator.comparing(Product::name))
                 .collect(Collectors.toList());
     }
 
