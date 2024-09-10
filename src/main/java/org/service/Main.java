@@ -28,5 +28,7 @@ public class Main {
 
         System.out.println("\nProdukter sorterade efter betyg:");
         warehouse.sortProductsByRating().forEach(System.out::println);
+
+        warehouse.addProductFromUserInput();
     }
 }

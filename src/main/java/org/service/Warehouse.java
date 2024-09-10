@@ -4,11 +4,14 @@ import org.entities.Category;
 import org.entities.Product;
 import org.exceptions.ProductNotFoundException;
 
+
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
-
+import java.util.Scanner;
 
 public class Warehouse {
 
@@ -38,6 +41,62 @@ public class Warehouse {
 
         var product = new Product(id, name, category, rating, createdDate, lastModifiedDate);
         addProduct(product);
+    }
+
+    public void addProductFromUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+
+            System.out.print("Ange produkt-ID (heltal): ");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            System.out.print("Ange produktens namn: ");
+            String name = scanner.nextLine();
+
+            System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
+            int categoryChoice = scanner.nextInt();
+            Category category = null;
+            switch (categoryChoice) {
+                case 1:
+                    category = Category.FRUIT;
+                    break;
+                case 2:
+                    category = Category.VEGETABLE;
+                    break;
+                case 3:
+                    category = Category.MEAT;
+                    break;
+                case 4:
+                    category = Category.FISH;
+                    break;
+                case 5:
+                    category = Category.DAIRY;
+                    break;
+                default:
+                    System.out.println("Ogiltigt val, försök igen.");
+                    return;
+            }
+            scanner.nextLine();
+
+            System.out.print("Ange betyg (0-10): ");
+            int rating = scanner.nextInt();
+            scanner.nextLine();
+
+            LocalDate createdDate = LocalDate.now();
+
+            LocalDate lastModifiedDate = LocalDate.now();
+
+            verifyProduct(id, name, category, rating, createdDate, lastModifiedDate);
+            System.out.println("Produkten lades till!");
+
+        } catch (InputMismatchException e) {
+            System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
+        } catch (DateTimeParseException e) {
+            System.out.println("Felaktigt datumformat, använd ÅÅÅÅ-MM-DD.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Fel: " + e.getMessage());
+        }
     }
 
     public Product findProductById(int id) {
