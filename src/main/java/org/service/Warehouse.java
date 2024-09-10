@@ -7,6 +7,7 @@ import org.exceptions.ProductNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 
 public class Warehouse {
@@ -15,6 +16,28 @@ public class Warehouse {
 
     public void addProduct(Product product) {
         products.add(product);
+    }
+
+    public void verifyProduct(int id, String name, Category category, int rating, LocalDate createdDate, LocalDate lastModifiedDate) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID måste vara ett positivt tal.");
+        }
+
+        if (rating < 0 || rating > 10) {
+            throw new IllegalArgumentException("Betyget måste vara mellan 0 och 10.");
+        }
+
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Du måste ange ett namn.");
+        }
+
+        if (category == null) {
+            throw new IllegalArgumentException("Du måste ange FRUIT, VEGETABLE, MEAT, FISH eller DAIRY.");
+        }
+
+        var product = new Product(id, name, category, rating, createdDate, lastModifiedDate);
+        addProduct(product);
     }
 
     public Product findProductById(int id) {
