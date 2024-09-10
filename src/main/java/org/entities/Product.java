@@ -5,15 +5,24 @@ package org.entities;
 import java.util.Date;
 
 public class Product {
-    private int id;
+    private static int id;
     private String name;
     private Category category;
     private int rating;
     private Date created;
     private Date lastChange;
 
+    public Product(int id, String name, Category category, int rating, Date created, Date lastChange) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.rating = rating;
+        this.created = created;
+        this.lastChange = lastChange;
+    }
+
     // Getters
-    public int getId() {
+    public static int getId() {
         return id;
     }
 

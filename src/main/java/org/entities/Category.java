@@ -2,7 +2,7 @@ package org.entities;
 
 public enum Category {
     FRUIT,
-    VEGETABLES,
+    VEGETABLE,
     MEAT,
     FISH,
     DAIRY

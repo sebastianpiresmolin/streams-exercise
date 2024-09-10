@@ -2,7 +2,7 @@ package org.entities;
 
 import java.util.Date;
 
-public class ImmutableProduct {
+public class ImmutableProductList {
     private final int id;
     private final String name;
     private final Category category;
@@ -10,7 +10,7 @@ public class ImmutableProduct {
     private final Date created;
     private final Date lastChange;
 
-    public ImmutableProduct(entities.Product product) {
+    public ImmutableProductList(Product product) {
         this.id = product.getId();
         this.name = product.getName();
         this.category = product.getCategory();
