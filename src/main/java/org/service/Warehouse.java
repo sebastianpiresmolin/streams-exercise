@@ -14,6 +14,10 @@ public class Warehouse {
 
     private final List<Product> products = new ArrayList<>();
 
+    public List<Product> getProducts() {
+        return List.copyOf(products);
+    }
+
     public void addProduct(Product product) {
         products.add(product);
     }
@@ -101,11 +105,29 @@ public class Warehouse {
                 .orElseThrow(() -> new ProductNotFoundException("Produkt med ID " + id + " hittades ej."));
     }
 
-    public List<Product> getProducts() {
-        return List.copyOf(products);
+    public Product findProductByIdFromUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.print("Ange produkt-ID (heltal): ");
+            if (!scanner.hasNextInt()) {
+                System.out.println("Felaktig inmatning. Ange ett giltigt heltal.");
+                return null;
+            }
+            int productId = scanner.nextInt();
+            scanner.nextLine();
+
+            Product product = findProductById(productId);
+
+            System.out.println("Produkt hittad: " + product);
+            return product;
+
+        } catch (ProductNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (InputMismatchException e) {
+            System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
+        }
+        return null;
     }
-
-
 
     public List<Product> filterProductsByCategoryFromUserInput() {
         Scanner scanner = new Scanner(System.in);
@@ -132,10 +154,10 @@ public class Warehouse {
                     break;
                 default:
                     System.out.println("Ogiltigt val, försök igen.");
-                    return null;  // Returnerar null om valet är ogiltigt
+                    return null;
             }
 
-            // Anropa metoden som filtrerar och sorterar produkter efter kategori och namn
+
             List<Product> filteredProducts = filterProductsByCategory(category);
 
             if (filteredProducts.isEmpty()) {
@@ -159,6 +181,12 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
+
+    public List<Product> findProductsFromCreatedDate(LocalDate date) {
+        return products.stream()
+                .filter(product -> !product.createdDate().isBefore(date))
+                .collect(Collectors.toList());
+    }
 
     public List<Product> sortProductsByRating() {
         return products.stream()
