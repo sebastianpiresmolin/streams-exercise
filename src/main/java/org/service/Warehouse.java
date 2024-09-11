@@ -188,6 +188,35 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
+    public List<Product> findProductsFromCreatedDateFromUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+
+            System.out.print("Ange datum (ÅÅÅÅ-MM-DD): ");
+            String dateInput = scanner.nextLine();
+            LocalDate date = LocalDate.parse(dateInput);
+
+
+            List<Product> filteredProducts = findProductsFromCreatedDate(date);
+
+
+            if (filteredProducts.isEmpty()) {
+                System.out.println("Inga produkter hittades från och med datumet " + date + ".");
+            } else {
+                System.out.println("Produkter från och med " + date + ":");
+                filteredProducts.forEach(System.out::println);
+            }
+
+            return filteredProducts;
+
+        } catch (DateTimeParseException e) {
+            System.out.println("Felaktigt datumformat, vänligen ange datum i formatet ÅÅÅÅ-MM-DD.");
+        } catch (InputMismatchException e) {
+            System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
+        }
+        return null;
+    }
+
     public List<Product> sortProductsByRating() {
         return products.stream()
                 .sorted((p1, p2) -> Integer.compare(p2.rating(), p1.rating()))

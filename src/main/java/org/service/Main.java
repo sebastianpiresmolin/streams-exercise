@@ -45,7 +45,9 @@ public class Main {
                     scanner.nextLine();
                     break;
                 case 4:
-                    System.out.println("");
+                    warehouse.findProductsFromCreatedDateFromUserInput();
+                    System.out.println("\nTryck Enter för att komma till menyn");
+                    scanner.nextLine();
                     break;
                 case 5:
                     System.out.println("");
