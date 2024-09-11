@@ -217,9 +217,16 @@ public class Warehouse {
         return null;
     }
 
-    public List<Product> sortProductsByRating() {
-        return products.stream()
-                .sorted((p1, p2) -> Integer.compare(p2.rating(), p1.rating()))
+    public void findAndPrintMismatchedProducts() {
+        List<Product> mismatchedProducts = products.stream()
+                .filter(product -> !product.createdDate().equals(product.lastModifiedDate()))
                 .collect(Collectors.toList());
+
+        if (mismatchedProducts.isEmpty()) {
+            System.out.println("Hittar inga modifierade produkter.");
+        } else {
+            System.out.println("Produkter som modifierats:");
+            mismatchedProducts.forEach(System.out::println);
+        }
     }
 }

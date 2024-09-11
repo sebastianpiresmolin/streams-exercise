@@ -50,10 +50,14 @@ public class Main {
                     scanner.nextLine();
                     break;
                 case 5:
-                    System.out.println("");
+                    warehouse.findAndPrintMismatchedProducts();
+                    System.out.println("\nTryck Enter för att komma till menyn");
+                    scanner.nextLine();
                     break;
                 case 6:
                     System.out.println("");
+                    System.out.println("\nTryck Enter för att komma till menyn");
+                    scanner.nextLine();
                     break;
                 case 7:
                     warehouse.addProductFromUserInput();
@@ -74,8 +78,8 @@ public class Main {
         System.out.println("1. Se alla produkter i lager");
         System.out.println("2. Sök efter kategori");
         System.out.println("3. Sök efter ID");
-        System.out.println("4. Beräkna bästa laddningstid (4t)");
-        System.out.println("5.");
+        System.out.println("4. Sök efter datum");
+        System.out.println("5. Sök efter modifierade produkter");
         System.out.println("6. Skriv ut dataunderlag");
         System.out.println("7. Lägg till ny produkt");
         System.out.println("e. Avsluta programmet");
