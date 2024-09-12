@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,8 +34,8 @@ public class WarehouseTest {
 
         // Assert
         assertEquals(2, products.size(), "The list should contain 2 products.");
-        assertTrue(products.contains(new Product(2, "Tomato", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now())));
-        assertTrue(products.contains(new Product(3, "Apple", Category.FRUIT, 8, LocalDate.now(), LocalDate.now())));
+        assertTrue(products.contains(new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now())));
+        assertTrue(products.contains(new Product(2, "Apple", Category.FRUIT, 8, LocalDate.now(), LocalDate.now())));
     }
 
     @Test
@@ -117,4 +119,117 @@ public class WarehouseTest {
             warehouse.verifyProduct(3, "Tomato", null, 9, LocalDate.now(), LocalDate.now());
         }, "Du måste ange FRUIT, VEGETABLE, MEAT, FISH eller DAIRY.");
     }
+
+    @Test
+    public void testAddProductFromUserInput() {
+        // Simulate user input
+        String simulatedInput = "1\n" +
+                "Carrot\n" +
+                "2\n" +
+                "9\n";
+
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Act
+        warehouse.addProductFromUserInput();
+
+        // Assert
+        List<Product> products = warehouse.getProducts();
+        assertEquals(3, products.size(), "The product should be added.");
+        Product addedProduct = products.get(2); // The new product should be the 3rd in the list
+        assertEquals(1, addedProduct.id());
+        assertEquals("Carrot", addedProduct.name());
+        assertEquals(Category.VEGETABLE, addedProduct.category());
+        assertEquals(9, addedProduct.rating());
+    }
+
+    @Test
+    public void testAddProductFromUserInputInvalidID() {
+        // Simulate user input with invalid ID
+        String simulatedInput = "0\n" +
+                "Carrot?\n" +
+                "2\n" +
+                "10\n";
+
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.addProductFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Fel: ID måste vara ett positivt tal."),
+                "Expected error message about invalid ID.");
+    }
+
+    @Test
+    public void testAddProductFromUserInputInvalidName() {
+        // Simulate user input with invalid Name
+        String simulatedInput = "1\n" +
+                "\n" +
+                "2\n" +
+                "10\n";
+
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.addProductFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Fel: Du måste ange ett namn."),
+                "Expected error message about invalid Name.");
+    }
+
+    @Test
+    public void testAddProductFromUserInputInvalidCategory() {
+        // Simulate user input with invalid Category
+        String simulatedInput = "1\n" +
+                "Carrot\n" +
+                "100\n" +
+                "10\n";
+
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.addProductFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Ogiltigt val, försök igen."),
+                "Expected error message about invalid Category.");
+    }
+
+    @Test
+    public void testAddProductFromUserInputInvalidRating() {
+        // Simulate user input with invalid rating
+        String simulatedInput = "1\n" +
+                "Carrot\n" +
+                "2\n" +
+                "11\n";
+
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.addProductFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Fel: Betyget måste vara mellan 0 och 10."),
+                "Expected error message about invalid rating.");
+    }
+
+
 }
