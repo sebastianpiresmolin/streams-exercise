@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 
+
 public class Warehouse {
 
     private final List<Product> products = new ArrayList<>();
@@ -50,7 +51,6 @@ public class Warehouse {
     public void addProductFromUserInput() {
         Scanner scanner = new Scanner(System.in);
         try {
-
             System.out.print("Ange produkt-ID (heltal): ");
             int id = scanner.nextInt();
             scanner.nextLine();
@@ -79,7 +79,7 @@ public class Warehouse {
                     break;
                 default:
                     System.out.println("Ogiltigt val, försök igen.");
-                    return;
+                    return;  // If invalid category, return early
             }
             scanner.nextLine();
 
@@ -87,8 +87,11 @@ public class Warehouse {
             int rating = scanner.nextInt();
             scanner.nextLine();
 
-            LocalDate createdDate = LocalDate.now();
+            if (rating < 0 || rating > 10) {
+                throw new IllegalArgumentException("Betyget måste vara mellan 0 och 10.");
+            }
 
+            LocalDate createdDate = LocalDate.now();
             LocalDate lastModifiedDate = LocalDate.now();
 
             verifyProduct(id, name, category, rating, createdDate, lastModifiedDate);
