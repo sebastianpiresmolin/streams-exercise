@@ -11,21 +11,24 @@ public class Main {
         Warehouse warehouse = new Warehouse();
         Scanner sc = new Scanner(System.in);
 
-        Product product1 = new Product(1, "Banana", Category.FRUIT, 9, LocalDate.now(), LocalDate.now());
-        Product product2 = new Product(2, "Apple", Category.FRUIT, 7, LocalDate.now(), LocalDate.now());
-        Product product3 = new Product(3, "Steak", Category.MEAT, 5, LocalDate.now(), LocalDate.now());
+        Product product1 =
+                new Product(1, "Banana", Category.FRUIT, 9, LocalDate.now().minusDays(5), LocalDate.now().minusDays(2));
+        Product product2 =
+                new Product(2, "Apple", Category.FRUIT, 7, LocalDate.now(), LocalDate.now());
+        Product product3 =
+                new Product(3, "Steak", Category.MEAT, 5, LocalDate.now(), LocalDate.now());
 
         warehouse.addProduct(product1);
         warehouse.addProduct(product2);
         warehouse.addProduct(product3);
 
-        OUTER: while (true) {
+        while (true) {
             Scanner scanner = new Scanner(System.in);
             displayMenu();
             int choice = menuSelection(sc);
             if (choice == -1) {
                 System.out.println("Programmet avslutas.");
-                break; // Exit the program
+                break;
             }
             switch (choice) {
                 case 1:
@@ -55,7 +58,7 @@ public class Main {
                     scanner.nextLine();
                     break;
                 case 6:
-                    System.out.println("");
+                    warehouse.modifyProductByIdFromUserInput();
                     System.out.println("\nTryck Enter för att komma till menyn");
                     scanner.nextLine();
                     break;
@@ -70,9 +73,9 @@ public class Main {
 
     public static void displayMenu() {
         System.out.println("====================================");
-        System.out.println("");
+        System.out.println(" ");
         System.out.println("Välkommen till lagret");
-        System.out.println("");
+        System.out.println(" ");
         System.out.println("====================================");
         System.out.println("Var god välj ett alternativ:");
         System.out.println("1. Se alla produkter i lager");
@@ -80,7 +83,7 @@ public class Main {
         System.out.println("3. Sök efter ID");
         System.out.println("4. Sök efter datum");
         System.out.println("5. Sök efter modifierade produkter");
-        System.out.println("6. Skriv ut dataunderlag");
+        System.out.println("6. Modifiera befintlig produkt");
         System.out.println("7. Lägg till ny produkt");
         System.out.println("e. Avsluta programmet");
         System.out.println("====================================");
@@ -94,17 +97,5 @@ public class Main {
         }
         return Integer.parseInt(input); // Parse the input as an integer
     }
-
-
-
-
-
-        //System.out.println("\nProdukt med angivet ID");
-        //var productById = warehouse.findProductById(1);
-        //System.out.println(productById);
-
-        //System.out.println("\nProdukter sorterade efter betyg:");
-        //warehouse.sortProductsByRating().forEach(System.out::println);
-
 
     }
