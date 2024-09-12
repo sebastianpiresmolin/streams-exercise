@@ -4,6 +4,7 @@ import org.entities.Product;
 import org.entities.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.exceptions.ProductNotFoundException;
 
 
 import java.time.LocalDate;
@@ -270,5 +271,82 @@ public class WarehouseTest {
                 "Expected error message about InputMismatchException.");
     }
 
+    @Test
+    public void testFindProductByIdValid() {
+        Product product = new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
+        warehouse.addProduct(product);
 
+        // Act
+        Product foundProduct = warehouse.findProductById(1);
+
+        // Assert
+        assertNotNull(foundProduct, "Product should be found.");
+        assertEquals(1, foundProduct.id(), "Product ID should match.");
+        assertEquals("Carrot", foundProduct.name(), "Product name should match.");
+    }
+
+    @Test
+    public void testFindProductByIdInvalid() {
+        assertThrows(ProductNotFoundException.class, () -> {
+            warehouse.findProductById(999);
+        }, "Expected ProductNotFoundException for invalid product ID.");
+    }
+
+    @Test
+    public void testFindProductByIdFromUserInputValid() {
+        // Arrange: Add a product to the warehouse
+        Product product = new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
+        warehouse.addProduct(product);
+
+        // Simulate user input for a valid product ID
+        String simulatedInput = "1\n";  // Product ID 1
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Capture the console output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act: Call the method
+        warehouse.findProductByIdFromUserInput();
+
+        // Assert: Verify the correct product was found and printed
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkt hittad: Product[id=1, name=Carrot, category=VEGETABLE, rating=9, createdDate=2024-09-12, lastModifiedDate=2024-09-12]"), "Expected product details in output.");
+    }
+
+    @Test
+    public void testFindProductByIdFromUserInputInvalidInput() {
+        // Simulate user input with non-integer input
+        String simulatedInput = "abc\n";  // Invalid ID
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Capture the console output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act: Call the method
+        warehouse.findProductByIdFromUserInput();
+
+        // Assert: Verify that the correct error message is printed
+        String output = outputStream.toString();
+        assertTrue(output.contains("Felaktig inmatning. Ange ett giltigt heltal."), "Expected error message for invalid input.");
+    }
+
+    @Test
+    public void testFindProductByIdFromUserInputProductNotFound() {
+        // Simulate user input for a non-existing product ID
+        String simulatedInput = "999\n";  // Product ID 999 does not exist
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Capture the console output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act: Call the method
+        warehouse.findProductByIdFromUserInput();
+
+        // Assert: Verify the correct error message is printed when product not found
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkt med ID 999 hittades ej."), "Expected error message for product not found.");
+    }
 }

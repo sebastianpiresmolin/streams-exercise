@@ -128,8 +128,6 @@ public class Warehouse {
 
         } catch (ProductNotFoundException e) {
             System.out.println(e.getMessage());
-        } catch (InputMismatchException e) {
-            System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
         }
     }
 
