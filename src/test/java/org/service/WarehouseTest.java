@@ -17,13 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WarehouseTest {
 
     private Warehouse warehouse;
+    private LocalDate currentDate;
 
     @BeforeEach
     public void setup() {
         warehouse = new Warehouse();
+        currentDate = LocalDate.now();
 
-        Product product1 = new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
-        Product product2 = new Product(2, "Apple", Category.FRUIT, 8, LocalDate.now(), LocalDate.now());
+
+        Product product1 = new Product(1, "Carrot", Category.VEGETABLE, 9, currentDate, currentDate);
+        Product product2 = new Product(2, "Apple", Category.FRUIT, 8, currentDate, currentDate);
         warehouse.addProduct(product1);
         warehouse.addProduct(product2);
     }
@@ -294,48 +297,123 @@ public class WarehouseTest {
 
     @Test
     public void testFindProductByIdFromUserInputValid() {
-        // Arrange: Add a product to the warehouse
+        // Arrange
         Product product = new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
         warehouse.addProduct(product);
 
-        // Simulate user input for a valid product ID
-        String simulatedInput = "1\n";  // Product ID 1
+        String simulatedInput = "1\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
 
-        // Capture the console output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
-        // Act: Call the method
+        // Act
         warehouse.findProductByIdFromUserInput();
 
-        // Assert: Verify the correct product was found and printed
+        // Assert
         String output = outputStream.toString();
-        assertTrue(output.contains("Produkt hittad: Product[id=1, name=Carrot, category=VEGETABLE, rating=9, createdDate=2024-09-12, lastModifiedDate=2024-09-12]"), "Expected product details in output.");
+        assertTrue(output.contains("Produkt hittad: Product[id=1, name=Carrot, category=VEGETABLE, rating=9, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate +"]"), "Expected product details in output.");
     }
 
     @Test
     public void testFindProductByIdFromUserInputInvalidInput() {
-        // Simulate user input with non-integer input
-        String simulatedInput = "abc\n";  // Invalid ID
+        String simulatedInput = "abc\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
 
-        // Capture the console output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
-        // Act: Call the method
+        // Act
         warehouse.findProductByIdFromUserInput();
 
-        // Assert: Verify that the correct error message is printed
+        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Felaktig inmatning. Ange ett giltigt heltal."), "Expected error message for invalid input.");
     }
 
     @Test
     public void testFindProductByIdFromUserInputProductNotFound() {
-        // Simulate user input for a non-existing product ID
-        String simulatedInput = "999\n";  // Product ID 999 does not exist
+        String simulatedInput = "999\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findProductByIdFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkt med ID 999 hittades ej."), "Expected error message for product not found.");
+    }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputVegetable() {
+        String simulatedInput = "2\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter i kategorin VEGETABLE:"), "Expected VEGETABLES category header.");
+        assertTrue(output.contains("Product[id=1, name=Carrot, category=VEGETABLE, rating=9, createdDate="
+                + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Carrot in output.");
+        assertFalse(output.contains("Apple"), "Apple (FRUIT) should not appear in the FRUIT category output.");
+    }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputFruit() {
+        String simulatedInput = "1\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+        var createdDate = LocalDate.now();
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter i kategorin FRUIT:"), "Expected FRUIT category header.");
+        assertTrue(output.contains("Product[id=2, name=Apple, category=FRUIT, rating=8, createdDate="
+                + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Apple in output.");
+        assertFalse(output.contains("Carrot"), "Carrot (VEGETABLE) should not appear in the FRUIT category output.");
+    }
+
+    // Continue with similar tests for MEAT, FISH, DAIRY
+    @Test
+    public void testFilterProductsByCategoryFromUserInputMeat() {
+        // Simulate input for MEAT category (3)
+        String simulatedInput = "3\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Add products to the warehouse
+        warehouse.addProduct(new Product(1, "Apple", Category.FRUIT, 9, LocalDate.now(), LocalDate.now()));
+        warehouse.addProduct(new Product(3, "Steak", Category.MEAT, 8, LocalDate.now(), LocalDate.now()));
+
+        // Capture the console output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act: Call the method
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert: Verify that only the product in the MEAT category is printed
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter i kategorin MEAT:"), "Expected MEAT category header.");
+        assertTrue(output.contains("Product{id=3, name=Steak"), "Expected Steak in output.");
+    }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputInvalidCategory() {
+        // Simulate input for an invalid category (e.g., 10)
+        String simulatedInput = "10\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
 
         // Capture the console output
@@ -343,10 +421,10 @@ public class WarehouseTest {
         System.setOut(new PrintStream(outputStream));
 
         // Act: Call the method
-        warehouse.findProductByIdFromUserInput();
+        warehouse.filterProductsByCategoryFromUserInput();
 
-        // Assert: Verify the correct error message is printed when product not found
+        // Assert: Verify that the correct error message is printed for invalid category
         String output = outputStream.toString();
-        assertTrue(output.contains("Produkt med ID 999 hittades ej."), "Expected error message for product not found.");
+        assertTrue(output.contains("Ogiltigt val, försök igen."), "Expected error message for invalid category.");
     }
 }

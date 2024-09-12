@@ -16,11 +16,14 @@ public class Main {
         Product product2 =
                 new Product(2, "Apple", Category.FRUIT, 7, LocalDate.now(), LocalDate.now());
         Product product3 =
-                new Product(3, "Steak", Category.MEAT, 5, LocalDate.now(), LocalDate.now());
+                new Product(3, "Carrot", Category.VEGETABLE, 7, LocalDate.now(), LocalDate.now());
+        Product product4 =
+                new Product(4, "Steak", Category.MEAT, 5, LocalDate.now(), LocalDate.now());
 
         warehouse.addProduct(product1);
         warehouse.addProduct(product2);
         warehouse.addProduct(product3);
+        warehouse.addProduct(product4);
 
         while (true) {
             Scanner scanner = new Scanner(System.in);
