@@ -79,7 +79,7 @@ public class Warehouse {
                     break;
                 default:
                     System.out.println("Ogiltigt val, försök igen.");
-                    return;  // If invalid category, return early
+                    return;
             }
             scanner.nextLine();
 
