@@ -60,7 +60,7 @@ public class Warehouse {
 
             System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
             int categoryChoice = scanner.nextInt();
-            Category category = null;
+            Category category;
             switch (categoryChoice) {
                 case 1:
                     category = Category.FRUIT;
@@ -139,7 +139,7 @@ public class Warehouse {
             try {
                 System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
                 int categoryChoice = scanner.nextInt();
-                Category category = null;
+                Category category;
 
                 switch (categoryChoice) {
                     case 1:
