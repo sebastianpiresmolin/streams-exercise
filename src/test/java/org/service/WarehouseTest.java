@@ -43,7 +43,7 @@ public class WarehouseTest {
         List<Product> products = warehouse.getProducts();
 
         // Assert
-        assertEquals(2, products.size(), "The list should contain 2 products.");
+        assertEquals(5, products.size(), "The list should contain 5 products.");
         assertTrue(products.contains(new Product(1, "Carrot", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now())));
         assertTrue(products.contains(new Product(2, "Apple", Category.FRUIT, 8, LocalDate.now(), LocalDate.now())));
     }
@@ -84,8 +84,8 @@ public class WarehouseTest {
         warehouse.verifyProduct(3, "Tomato", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
 
         // Assert:
-        assertEquals(3, warehouse.getProducts().size(), "One product should be added.");
-        assertEquals("Tomato", warehouse.getProducts().get(2).name(), "The product's name should be 'Tomato'.");
+        assertEquals(6, warehouse.getProducts().size(), "One product should be added.");
+        assertEquals("Tomato", warehouse.getProducts().get(5).name(), "The product's name should be 'Tomato'.");
     }
 
     @Test
@@ -133,11 +133,11 @@ public class WarehouseTest {
     @Test
     public void testAddProductFromUserInputMultipleCategories() {
         String[] inputs = {
-                "1\nApple\n1\n8\n",       // Category.FRUIT
-                "2\nCarrot\n2\n9\n",      // Category.VEGETABLE
-                "3\nSteak\n3\n10\n",      // Category.MEAT
-                "4\nSalmon\n4\n7\n",      // Category.FISH
-                "5\nMilk\n5\n6\n"         // Category.DAIRY
+                "6\nOrange\n1\n8\n",       // Category.FRUIT
+                "7\nCarrot\n2\n9\n",      // Category.VEGETABLE
+                "8\nSteak\n3\n10\n",      // Category.MEAT
+                "9\nSalmon\n4\n7\n",      // Category.FISH
+                "10\nMilk\n5\n6\n"         // Category.DAIRY
         };
 
         for (String input : inputs) {
@@ -157,22 +157,22 @@ public class WarehouseTest {
         assertEquals(8, product6.rating());
 
         Product product7 = products.get(6);
-        assertEquals("Broccoli", product7.name());
+        assertEquals("Carrot", product7.name());
         assertEquals(Category.VEGETABLE, product7.category());
         assertEquals(9, product7.rating());
 
         Product product8 = products.get(7);
-        assertEquals("Chicken", product8.name());
+        assertEquals("Steak", product8.name());
         assertEquals(Category.MEAT, product8.category());
         assertEquals(10, product8.rating());
 
         Product product9 = products.get(8);
-        assertEquals("Tuna", product9.name());
+        assertEquals("Salmon", product9.name());
         assertEquals(Category.FISH, product9.category());
         assertEquals(7, product9.rating());
 
         Product product10 = products.get(9);
-        assertEquals("Cheese", product10.name());
+        assertEquals("Milk", product10.name());
         assertEquals(Category.DAIRY, product10.category());
         assertEquals(6, product10.rating());
     }
