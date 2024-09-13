@@ -27,8 +27,14 @@ public class WarehouseTest {
 
         Product product1 = new Product(1, "Carrot", Category.VEGETABLE, 9, currentDate, currentDate);
         Product product2 = new Product(2, "Apple", Category.FRUIT, 8, currentDate, currentDate);
+        Product product3 = new Product(3, "Steak", Category.MEAT, 8, currentDate, currentDate);
+        Product product4 = new Product(4, "Salmon", Category.FISH, 8, currentDate, currentDate);
+        Product product5 = new Product(5, "Milk", Category.DAIRY, 8, currentDate, currentDate);
         warehouse.addProduct(product1);
         warehouse.addProduct(product2);
+        warehouse.addProduct(product3);
+        warehouse.addProduct(product4);
+        warehouse.addProduct(product5);
     }
 
     @Test
@@ -143,27 +149,32 @@ public class WarehouseTest {
 
         // Assert
         List<Product> products = warehouse.getProducts();
-        assertEquals(7, products.size(), "All 5 products should be added.");
+        assertEquals(10, products.size(), "There should be 10 products in total.");
 
-        assertEquals("Apple", products.get(2).name());
-        assertEquals(Category.FRUIT, products.get(2).category());
-        assertEquals(8, products.get(2).rating());
+        Product product6 = products.get(5);
+        assertEquals("Orange", product6.name());
+        assertEquals(Category.FRUIT, product6.category());
+        assertEquals(8, product6.rating());
 
-        assertEquals("Carrot", products.get(3).name());
-        assertEquals(Category.VEGETABLE, products.get(3).category());
-        assertEquals(9, products.get(3).rating());
+        Product product7 = products.get(6);
+        assertEquals("Broccoli", product7.name());
+        assertEquals(Category.VEGETABLE, product7.category());
+        assertEquals(9, product7.rating());
 
-        assertEquals("Steak", products.get(4).name());
-        assertEquals(Category.MEAT, products.get(4).category());
-        assertEquals(10, products.get(4).rating());
+        Product product8 = products.get(7);
+        assertEquals("Chicken", product8.name());
+        assertEquals(Category.MEAT, product8.category());
+        assertEquals(10, product8.rating());
 
-        assertEquals("Salmon", products.get(5).name());
-        assertEquals(Category.FISH, products.get(5).category());
-        assertEquals(7, products.get(5).rating());
+        Product product9 = products.get(8);
+        assertEquals("Tuna", product9.name());
+        assertEquals(Category.FISH, product9.category());
+        assertEquals(7, product9.rating());
 
-        assertEquals("Milk", products.get(6).name());
-        assertEquals(Category.DAIRY, products.get(6).category());
-        assertEquals(6, products.get(6).rating());
+        Product product10 = products.get(9);
+        assertEquals("Cheese", product10.name());
+        assertEquals(Category.DAIRY, product10.category());
+        assertEquals(6, product10.rating());
     }
 
     @Test
@@ -370,7 +381,6 @@ public class WarehouseTest {
     public void testFilterProductsByCategoryFromUserInputFruit() {
         String simulatedInput = "1\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
-        var createdDate = LocalDate.now();
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
@@ -386,29 +396,64 @@ public class WarehouseTest {
         assertFalse(output.contains("Carrot"), "Carrot (VEGETABLE) should not appear in the FRUIT category output.");
     }
 
-    // Continue with similar tests for MEAT, FISH, DAIRY
     @Test
     public void testFilterProductsByCategoryFromUserInputMeat() {
-        // Simulate input for MEAT category (3)
         String simulatedInput = "3\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
 
-        // Add products to the warehouse
-        warehouse.addProduct(new Product(1, "Apple", Category.FRUIT, 9, LocalDate.now(), LocalDate.now()));
-        warehouse.addProduct(new Product(3, "Steak", Category.MEAT, 8, LocalDate.now(), LocalDate.now()));
-
-        // Capture the console output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
-        // Act: Call the method
+        // Act
         warehouse.filterProductsByCategoryFromUserInput();
 
-        // Assert: Verify that only the product in the MEAT category is printed
+        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Produkter i kategorin MEAT:"), "Expected MEAT category header.");
-        assertTrue(output.contains("Product{id=3, name=Steak"), "Expected Steak in output.");
+        assertTrue(output.contains("Product[id=3, name=Steak, category=MEAT, rating=8, createdDate="
+                + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Steak in output.");
+        assertFalse(output.contains("Carrot"), "Carrot (VEGETABLE) should not appear in the MEAT category output.");
     }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputFish() {
+        String simulatedInput = "4\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter i kategorin FISH:"), "Expected FISH category header.");
+        assertTrue(output.contains("Product[id=4, name=Salmon, category=FISH, rating=8, createdDate="
+                + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Salmon in output.");
+        assertFalse(output.contains("Carrot"), "Carrot (VEGETABLE) should not appear in the FISH category output.");
+    }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputDairy() {
+        String simulatedInput = "5\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter i kategorin DAIRY:"), "Expected DAIRY category header.");
+        assertTrue(output.contains("Product[id=5, name=Milk, category=DAIRY, rating=8, createdDate="
+                + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Milk in output.");
+        assertFalse(output.contains("Carrot"), "Carrot (VEGETABLE) should not appear in the FISH category output.");
+    }
+
+
 
     @Test
     public void testFilterProductsByCategoryFromUserInputInvalidCategory() {
