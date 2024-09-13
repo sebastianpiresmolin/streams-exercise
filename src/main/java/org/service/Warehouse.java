@@ -133,46 +133,56 @@ public class Warehouse {
 
     public void filterProductsByCategoryFromUserInput() {
         Scanner scanner = new Scanner(System.in);
-        try {
-            System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
-            int categoryChoice = scanner.nextInt();
-            Category category = null;
+        boolean validInput = false;
 
-            switch (categoryChoice) {
-                case 1:
-                    category = Category.FRUIT;
-                    break;
-                case 2:
-                    category = Category.VEGETABLE;
-                    break;
-                case 3:
-                    category = Category.MEAT;
-                    break;
-                case 4:
-                    category = Category.FISH;
-                    break;
-                case 5:
-                    category = Category.DAIRY;
-                    break;
-                default:
-                    System.out.println("Ogiltigt val, försök igen.");
-                    return;
+        while (!validInput) {
+            try {
+                System.out.println("Välj kategori: 1. Frukt, 2. Grönsak, 3. Kött, 4. Fisk, 5. Mejeri");
+                int categoryChoice = scanner.nextInt();
+                Category category = null;
+
+                switch (categoryChoice) {
+                    case 1:
+                        category = Category.FRUIT;
+                        break;
+                    case 2:
+                        category = Category.VEGETABLE;
+                        break;
+                    case 3:
+                        category = Category.MEAT;
+                        break;
+                    case 4:
+                        category = Category.FISH;
+                        break;
+                    case 5:
+                        category = Category.DAIRY;
+                        break;
+                    case 99:
+                        category = Category.EMPTY;
+                        break;
+                    default:
+                        System.out.println("Ogiltigt val, försök igen.");
+                        continue;
+                }
+
+                validInput = true;
+
+                List<Product> filteredProducts = filterProductsByCategory(category);
+
+                if (filteredProducts.isEmpty()) {
+                    System.out.println("Inga produkter hittades i den valda kategorin.");
+                } else {
+                    System.out.println("Produkter i kategorin " + category + ":");
+                    filteredProducts.forEach(System.out::println);
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Felaktig inmatning, vänligen ange ett giltigt heltal.");
+                scanner.nextLine();
             }
-
-
-            List<Product> filteredProducts = filterProductsByCategory(category);
-
-            if (filteredProducts.isEmpty()) {
-                System.out.println("Inga produkter hittades i den valda kategorin.");
-            } else {
-                System.out.println("Produkter i kategorin " + category + ":");
-                filteredProducts.forEach(System.out::println);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Fel vid inmatning: " + e.getMessage());
         }
     }
+
 
     public List<Product> filterProductsByCategory(Category category) {
         return products.stream()
@@ -209,8 +219,6 @@ public class Warehouse {
 
         } catch (DateTimeParseException e) {
             System.out.println("Felaktigt datumformat, vänligen ange datum i formatet ÅÅÅÅ-MM-DD.");
-        } catch (InputMismatchException e) {
-            System.out.println("Felaktig inmatning, vänligen ange rätt datatyp.");
         }
     }
 

@@ -456,20 +456,91 @@ public class WarehouseTest {
 
 
     @Test
-    public void testFilterProductsByCategoryFromUserInputInvalidCategory() {
-        // Simulate input for an invalid category (e.g., 10)
-        String simulatedInput = "10\n";
+    public void testFilterProductsByCategoryFromUserInputErrors() {
+        String simulatedInput = "10\n" +
+                "e\n" +
+                "1\n";
         System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
 
-        // Capture the console output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outputStream));
 
-        // Act: Call the method
+        // Act
         warehouse.filterProductsByCategoryFromUserInput();
 
-        // Assert: Verify that the correct error message is printed for invalid category
+        // Assert
         String output = outputStream.toString();
         assertTrue(output.contains("Ogiltigt val, försök igen."), "Expected error message for invalid category.");
+        assertTrue(output.contains("Felaktig inmatning, vänligen ange ett giltigt heltal."));
+        assertTrue(output.contains("Produkter i kategorin FRUIT:"), "Expected FRUIT category after valid input.");
+    }
+
+    @Test
+    public void testFilterProductsByCategoryFromUserInputEmptyCategory() {
+        String simulatedInput = "99\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.filterProductsByCategoryFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Inga produkter hittades i den valda kategorin."), "Expected error message for empty category.");
+    }
+
+    @Test
+    public void testFindProductsFromCreatedDateFromUserInput() {
+        String simulatedInput = "2024-09-10\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findProductsFromCreatedDateFromUserInput();
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter från och med 2024-09-10:"), "expected products from date ... header");
+        assertTrue(output.contains("Product[id=1, name=Carrot, category=VEGETABLE, rating=9, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Carrot in output.");
+        assertTrue(output.contains("Product[id=2, name=Apple, category=FRUIT, rating=8, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Apple in output.");
+        assertTrue(output.contains("Product[id=3, name=Steak, category=MEAT, rating=8, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Steak in output.");
+        assertTrue(output.contains("Product[id=4, name=Salmon, category=FISH, rating=8, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate + "]"), "Expected Salmon in output.");
+        assertTrue(output.contains("Product[id=5, name=Milk, category=DAIRY, rating=8, createdDate=" + currentDate + ", lastModifiedDate=" + currentDate + "]"), "expected Milk in output.");
+
+    }
+
+    @Test
+    public void testFindProductsFromCreatedDateFromUserInputNoProductsFound() {
+        String simulatedInput = "2099-09-10\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findProductsFromCreatedDateFromUserInput();
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("Inga produkter hittades från och med datumet 2099-09-10."));
+    }
+
+    @Test
+    public void testFindProductsFromCreatedDateFromUserInputDateException() {
+        String simulatedInput = "e\n";
+        System.setIn(new java.io.ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findProductsFromCreatedDateFromUserInput();
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("Felaktigt datumformat, vänligen ange datum i formatet ÅÅÅÅ-MM-DD."));
+
+
     }
 }

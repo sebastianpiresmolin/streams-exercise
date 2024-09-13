@@ -5,5 +5,6 @@ public enum Category {
     VEGETABLE,
     MEAT,
     FISH,
-    DAIRY
+    DAIRY,
+    EMPTY
 }
