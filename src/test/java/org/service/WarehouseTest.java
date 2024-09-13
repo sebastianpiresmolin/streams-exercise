@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.exceptions.ProductNotFoundException;
 
-
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
@@ -540,7 +540,142 @@ public class WarehouseTest {
 
         String output = outputStream.toString();
         assertTrue(output.contains("Felaktigt datumformat, vänligen ange datum i formatet ÅÅÅÅ-MM-DD."));
+    }
+
+    @Test
+    public void TestfindAndPrintMismatchedProducts() {
+        var oldDate = LocalDate.now().minusDays(9999);
+
+        Product product = new Product(99, "Ancient Cheese", Category.DAIRY, 10, oldDate, currentDate);
+        warehouse.addProduct(product);
 
 
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findAndPrintMismatchedProducts();
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkter som modifierats:"), "Expected Products that have been modified header.");
+        assertTrue(output.contains("Product[id=99, name=Ancient Cheese, category=DAIRY, rating=10, createdDate=" + oldDate + ", lastModifiedDate=" + currentDate + "]"), "expected Ancient Cheese in output.");
+    }
+
+    @Test
+    public void TestfindAndPrintMismatchedProductsNoProductsFound() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.findAndPrintMismatchedProducts();
+
+        String output = outputStream.toString();
+        assertTrue(output.contains("Hittar inga modifierade produkter."), "Expected Products that have been modified header.");
+    }
+
+    @Test
+    public void testUpdateProductInWarehouseExistingProduct() {
+        Product originalProduct = new Product(6, "Potato", Category.VEGETABLE, 9, currentDate, currentDate);
+        warehouse.addProduct(originalProduct);
+
+        // Act
+        Product updatedProduct = new Product(1, "Updated Potato", Category.VEGETABLE, 10, currentDate, LocalDate.now());
+        warehouse.updateProductInWarehouse(updatedProduct);
+
+        // Assert
+        List<Product> products = warehouse.getProducts();
+        assertEquals(6, products.size(), "There should still be 6 products in the warehouse.");
+        Product retrievedProduct = products.get(5);
+        assertEquals("Updated Potato", retrievedProduct.name(), "Product name should be updated.");
+        assertEquals(10, retrievedProduct.rating(), "Product rating should be updated.");
+        assertEquals(currentDate, retrievedProduct.createdDate(), "Created date should not change.");
+        assertEquals(LocalDate.now(), retrievedProduct.lastModifiedDate(), "Last modified date should be updated.");
+    }
+
+    @Test
+    public void testModifyProductByIdFromUserInputAllCases() {
+        Product originalProduct = new Product(10, "Potato", Category.VEGETABLE, 9, LocalDate.now(), LocalDate.now());
+        warehouse.addProduct(originalProduct);
+
+        String[] inputs = {
+                "10\nja\nUpdated Potato\nja\n1\nja\n10\n",  // Change name, category to FRUIT, and rating
+                "10\nja\nUpdated Potato\nja\n2\nja\n9\n",   // Change name, category to VEGETABLE, and rating
+                "10\nja\nUpdated Potato\nja\n3\nja\n8\n",   // Change name, category to MEAT, and rating
+                "10\nja\nUpdated Potato\nja\n4\nja\n7\n",   // Change name, category to FISH, and rating
+                "10\nja\nUpdated Potato\nja\n5\nja\n6\n",   // Change name, category to DAIRY, and rating
+                "10\nja\nUpdated Potato\nnej\nja\n6\n"      // Invalid category input
+        };
+
+        for (String input : inputs) {
+            System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(outputStream));
+
+            // Act
+            warehouse.modifyProductByIdFromUserInput();
+
+            // Assert
+            Product updatedProduct = warehouse.findProductById(10);
+            String output = outputStream.toString();
+
+            if (input.contains("1\n")) {
+                assertEquals(Category.FRUIT, updatedProduct.category(), "Expected category FRUIT");
+            } else if (input.contains("2\n")) {
+                assertEquals(Category.VEGETABLE, updatedProduct.category(), "Expected category VEGETABLE");
+            } else if (input.contains("3\n")) {
+                assertEquals(Category.MEAT, updatedProduct.category(), "Expected category MEAT");
+            } else if (input.contains("4\n")) {
+                assertEquals(Category.FISH, updatedProduct.category(), "Expected category FISH");
+            } else if (input.contains("5\n")) {
+                assertEquals(Category.DAIRY, updatedProduct.category(), "Expected category DAIRY");
+            }
+
+            // Verify the rating has changed correctly
+            if (input.contains("ja\n10\n")) {
+                assertEquals(10, updatedProduct.rating(), "Expected rating 10");
+            } else if (input.contains("ja\n9\n")) {
+                assertEquals(9, updatedProduct.rating(), "Expected rating 9");
+            } else if (input.contains("ja\n8\n")) {
+                assertEquals(8, updatedProduct.rating(), "Expected rating 8");
+            } else if (input.contains("ja\n7\n")) {
+                assertEquals(7, updatedProduct.rating(), "Expected rating 7");
+            } else if (input.contains("ja\n6\n")) {
+                assertEquals(6, updatedProduct.rating(), "Expected rating 6");
+            }
+        }
+    }
+
+    @Test
+    public void testModifyProductByIdFromUserInputProductNotFound() {
+        String simulatedInput = "999\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.modifyProductByIdFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Produkten med ID 999 hittades ej."), "Expected error message for non-existent product.");
+    }
+
+    @Test
+    public void testModifyProductByIdFromUserInputInvalidInput() {
+        String simulatedInput = "abc\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        // Act
+        warehouse.modifyProductByIdFromUserInput();
+
+        // Assert
+        String output = outputStream.toString();
+        assertTrue(output.contains("Felaktig inmatning, försök igen."), "Expected error message for invalid input.");
     }
 }

@@ -286,7 +286,6 @@ public class Warehouse {
                         category = Category.DAIRY;
                         break;
                     default:
-                        System.out.println("Ogiltigt val, kategori ändrades ej.");
                         break;
                 }
             }
